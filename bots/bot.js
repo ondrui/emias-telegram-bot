@@ -3,6 +3,7 @@ const axios = require('axios');
 
 const channel = '@ondruiRedditNewPosts';
 const botToken = '5416194275:AAHRsSW4WVSWlg3gPyzOsJNMtsCPGpe9p0o';
+let getReqId;
 
 const startBot = () => {
   const redditBot = new Telegraf(botToken);
@@ -11,6 +12,10 @@ const startBot = () => {
     getAndPost(ctx);
   });
 
+  redditBot.command('stop', ctx => {
+    clearInterval(getReqId);
+  })
+
   redditBot.launch();
 
   const getAndPost = (ctx) => {
@@ -18,7 +23,7 @@ const startBot = () => {
       'https://www.mos.ru/api/doctor-record/v1/doctors?appointmentId%5B0%5D=466447610023&omsNumber%5B0%5D=7792289788001374&birthDate%5B0%5D=2017-07-11';
 
     const cookie =
-      'session-cookie=170b6efb5a79a2006ab83f6d6940ac7265b942c8a6525677cf38618ad670307d4f2204aa2cdd3a531aae58dfc5d89838; SL_G_WPT_TO=ru; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; PHPSESSID=lej5evv8d99j5b61vkssnjge4v; sbp_sid=000000000000000000000000000000000000; at=1; uxs_uid=e1fd70a0-1c5e-11ed-bd12-d15cf49848aa; ACS-SESSID=mbvhnj189cticr67epahh1cds0; mos_id=rBEAAmL6rX2qawAODegOAgA=; Ltpatoken2=HFUCpUTtugens7MTd4hNFv4oFUzO47WQ9aOVTxERtYRoEJTNS+Wm8BZLSt1EBv3auO8/rtISYOnasPEm7vg6UhW++2+hpr8NwXyUFLUVTO5w5izXW1bZzTNVDQxQtIXDwg6EFQ8Eco9dN4xKekZF7kNQuB7U+4WbobCqKePZrsc64Yuq2JUFcEK1FIsZT3l+oIdD7dCy8z3Qq/D6uE6v6TR2fqGugf+5kBrsEtjNxGWc62BAxLM5dRDrJQSUgRKlQLzCK0rsjz4QOwW6gG4ggC+Ewy1ln9LEY0ksy9EZom6/cvBMW7XC0gztJhN8fkvMoHi7f2Y8y4Z7HJSMOiLUOw==; acst=5b4QqBtxuO40eKZRzF9OaKt3Mnel8lA69XcHdFwyDzEyYjAzODk4Yy0xYmJhLTRlMjgtOGM4NS03NGE4MjU0ZjY3N2I';
+      'SL_G_WPT_TO=ru; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; PHPSESSID=lej5evv8d99j5b61vkssnjge4v; sbp_sid=000000000000000000000000000000000000; at=1; uxs_uid=e1fd70a0-1c5e-11ed-bd12-d15cf49848aa; mos_id=rBEAAmL6rX2qawAODegOAgA=; session-cookie=170bbda08f0f2d566ab83f6d6940ac72118c6b8cbd6bb7dd2034b9f3bf49f13790000baa507e589a9c5091a637652697; ACS-SESSID=jh56j65t5m28ec4d9ng3dsni2a; Ltpatoken2=ITbeAvN8lAi84rkmUXqao694PlBAwsTp1NVpQlNexksaRTDvsUQKNIb+dMzA43WZd4z+mysBGbD69wkbWrqwiePYKBZnMdjQdGM0acSpzrzwJr2lHAbO3NAUCoMUOYf9G7yARhhz1zUZY0vD0J6IIBqqvtRY3tZBGqN8Tkwrk5P8N0w8RRDWEySj11XW+mjssHwOr2fzjOfj5BP4DIvhkR2atdrPxdjKBQfHHBH8JKWF7+7uH3ajx2AxkPbvpo+mDsF2lCjve9Xcc7mKMMEA2dTS3iSWcKZcNJRl/4P/EdSV1QyejC7nvFQiMGRo+MfWge1/gzb+umpcFjTGF+io6g==; acst=-72Qn1wdsjHqohUY9EPeFcyhQZEMCoMVTNzoBYTI9Io2NDIwZDdjZi0wMTg1LTQ2ZGUtOTRjOC1lYWJjOTAwNzUwMDE';
     let i = 1;
 
     var config = {
@@ -47,7 +52,7 @@ const startBot = () => {
         console.log(error);
       });
 
-    setInterval(() => {
+    getReqId = setInterval(() => {
       axios(config)
         .then(function (response) {
           const { list } = response.data.data;
@@ -65,16 +70,8 @@ const startBot = () => {
         .catch(function (error) {
           console.log(error);
         });
-    }, 60000);
+    }, 100000);
   };
-
-  // const postToChannel = (posts, ctx) => {
-  //   posts.children.map((post, i) => {
-  //     setTimeout(() => {
-  //       ctx.telegram.sendPhoto(channel, post.data.url);
-  //     }, 5000 * i);
-  //   });
-  // };
 };
 
 module.exports.startBot = startBot;

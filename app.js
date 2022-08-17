@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const redditBot = require('./bots/reddit-bot');
+const bot = require('./bots/bot');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -39,6 +39,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-redditBot.startBot();
+bot.startBot();
 
 module.exports = app;
